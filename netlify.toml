@@ -1,6 +1,17 @@
 [build]
   command = "npm run build"
   publish = "out"
+  functions = "netlify_functions"
+
+[[redirects]]
+  from = "/join/:guest/:device"
+  to = "/.netlify/functions/join"
+  status = 200
+
+[[redirects]]
+  from = "/join/:guest"
+  to = "/.netlify/functions/join"
+  status = 200
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
