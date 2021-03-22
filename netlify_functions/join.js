@@ -7,7 +7,6 @@ exports.handler = async ({ httpMethod, path, queryStringParameters }) => {
   }
 
   const [, , guest, device = "cam"] = path.split("/");
-  console.log(guest, device);
   const { pwd } = queryStringParameters;
   const host = auth(guest, pwd);
 

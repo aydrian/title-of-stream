@@ -9,9 +9,12 @@
     "export": "next export"
   },
   "dependencies": {
+    "matter-js": "^0.16.1",
     "next": "10.0.9",
+    "poly-decomp": "^0.3.0",
     "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "react-dom": "17.0.1",
+    "tmi.js": "^1.7.5"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^3.0.3"
