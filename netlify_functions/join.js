@@ -56,10 +56,8 @@ const hosts = {
 };
 
 const auth = (guest, pwd) => {
-  if (
-    !pwd ||
-    !["aydrian", "chloe", "larena", "guest"].includes(guest.toLocaleLowerCase())
-  ) {
+  guest = guest.toLowerCase();
+  if (!pwd || !["aydrian", "chloe", "larena", "guest"].includes(guest)) {
     return false;
   }
 
