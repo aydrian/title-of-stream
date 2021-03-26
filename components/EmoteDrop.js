@@ -18,11 +18,11 @@ export function EmoteDrop({ messages }) {
     <canvas
       ref={emoteRef}
       style={{
-        height: 1080,
+        height: 720,
         left: 0,
         position: "absolute",
         top: 0,
-        width: 1920
+        width: 1280
       }}
     />
   );
