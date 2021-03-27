@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import { useEmote } from "@hooks/useEmote";
 
-export function EmoteDrop({ messages }) {
+export function EmoteDrop({
+  messages,
+  filter = [],
+  canvas = { height: 720, width: 1280 }
+}) {
   const { emoteRef, addEmote } = useEmote();
 
   useEffect(() => {
@@ -10,7 +14,9 @@ export function EmoteDrop({ messages }) {
 
     console.log(message);
     message.emotes.forEach((emote) => {
-      emote.locations.forEach(() => addEmote(emote.images.large));
+      if (filter.length === 0 || filter.includes(emote.name)) {
+        emote.locations.forEach(() => addEmote(emote.images.large));
+      }
     });
   }, [messages.length]);
 
@@ -18,11 +24,11 @@ export function EmoteDrop({ messages }) {
     <canvas
       ref={emoteRef}
       style={{
-        height: 720,
+        height: canvas.height,
         left: 0,
         position: "absolute",
         top: 0,
-        width: 1280
+        width: canvas.width
       }}
     />
   );
