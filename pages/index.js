@@ -4,13 +4,31 @@ import Footer from "@components/Footer";
 
 export default function Home() {
   return (
-    <div className="container">
+    <div
+      className="container"
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
       <Head>
         <title>[title of stream]</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main
+        style={{
+          padding: "5rem 0",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
         <Header title="[title of stream]" />
         <p className="description">
           Join <a href="https://twitch.tv/itsaydrian">Aydrian</a>,{" "}

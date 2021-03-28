@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import tmi from "tmi.js";
+import {
+  getMessageHTML,
+  parseAuthor,
+  parseCommand,
+  parseEmotes
+} from "@utils/parse-twitch-chat";
 
 /*
-
   Use this to acquire custom tokens for the webhooks
   https://twitchtokengenerator.com/
-
 */
 
-export default function useChatListener({ channels, commands = {} }) {
+export default function useChatListener({ channels }) {
   const [messages, setMessages] = useState([]);
-  const [command, setCommand] = useState();
 
   const client = new tmi.Client({
     connection: {
@@ -35,81 +38,42 @@ export default function useChatListener({ channels, commands = {} }) {
   }
 
   useEffect(() => {
-    client.on("chat", async (channel, tags, message, self) => {
-      let emotes = [];
-      if (tags.emotes) {
-        emotes = parseEmotes(tags.emotes, message);
+    client.on("message", async (channel, tags, msg, self) => {
+      // don’t process messages sent by the chatbot to avoid loops
+      if (self) return;
+
+      if (tags["message-type"] === "whisper") {
+        // we don’t handle whispers
+        return;
       }
 
-      if (message.match(/^(!|--)/)) {
-        const [command] = message.split(" ");
-        const commandResult = commands[command.toLowerCase()];
+      // chat activity always includes author and emote data
+      const time = new Date(parseInt(tags["tmi-sent-ts"]));
 
-        if (!commandResult) {
-          return;
-        }
+      const message = {
+        channel: channel.replace("#", ""),
+        message: msg,
+        author: parseAuthor(channel, tags),
+        emotes: parseEmotes(msg, tags.emotes),
+        time,
+        id: tags.id
+      };
 
-        setMessages((prev) => [
-          ...prev,
-          { text: message, user: tags.username }
-        ]);
+      if (msg.match(/^(!|--)/)) {
+        const { command, args } = parseCommand(msg);
 
-        await client.say(channel, commandResult);
-
-        return setCommand(message);
+        message.command = command;
+        message.args = args;
+      } else {
+        message.html = getMessageHTML(msg, message.emotes);
       }
 
-      return setMessages((prev) => [
-        ...prev,
-        { message, user: tags.username, emotes }
-      ]);
+      return setMessages((prev) => [...prev, message]);
     });
   }, []);
 
   return {
     connectListener,
-    messages,
-    command
+    messages
   };
 }
-
-/*
-{
-    "305912719": [
-        "5-14",
-        "21-30",
-        "37-46"
-    ]
-}
-
-[
-  {
-    name: "FortOne",
-    locations: [[10, 16]],
-    images: {
-      small: "https://static-cdn.jtvnw.net/emoticons/v1/822112/1.0",
-      medium: "https://static-cdn.jtvnw.net/emoticons/v1/822112/2.0",
-      large: "https://static-cdn.jtvnw.net/emoticons/v1/822112/3.0"
-    }
-  }
-]
-*/
-const parseEmotes = (emotes, message) => {
-  const newEmotes = Object.entries(emotes).map(([key, value]) => {
-    let emote = {
-      locations: value.map((location) => {
-        const [start, end] = location.split("-");
-        return [parseInt(start, 10), parseInt(end, 10) + 1];
-      }),
-      images: {
-        small: `https://static-cdn.jtvnw.net/emoticons/v1/${key}/1.0`,
-        medium: `https://static-cdn.jtvnw.net/emoticons/v1/${key}/2.0`,
-        large: `https://static-cdn.jtvnw.net/emoticons/v1/${key}/3.0`
-      }
-    };
-    const [start, end] = emote.locations[0];
-    emote.name = message.slice(start, end);
-    return emote;
-  });
-  return newEmotes;
-};

@@ -1,0 +1,7 @@
+.overlay {
+  display: grid;
+  font-family: var(--font-family);
+  grid-template-rows: 1fr 140px;
+  height: 100vh;
+  overflow: hidden;
+}

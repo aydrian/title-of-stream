@@ -1,16 +1,14 @@
 import { useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import useChatListener from "@hooks/useChatListener";
-import { EmoteDrop } from "@components/EmoteDrop";
+import { Overlays } from "@components/Overlays";
+import { LowerThird } from "@components/LowerThird";
 
-const CHAT_COMMANDS = {
-  "!test": "This is a test response from your chat command 👍"
-};
+import styles from "@styles/scenes.module.css";
 
 export default function Scenes() {
   const { connectListener, messages } = useChatListener({
-    channels: ["itsaydrian", "chloecondon", "LaRenaiocco"],
-    commands: CHAT_COMMANDS
+    channels: ["itsaydrian", "chloecondon", "LaRenaiocco"]
   });
   const router = useRouter();
   const urlRef = useRef(router.pathname);
@@ -25,15 +23,10 @@ export default function Scenes() {
   }, [router.pathname]);
 
   return (
-    <>
-      {false && (
-        <ul>
-          {messages.map((message, idx) => {
-            return <li key={idx}>{message.message}</li>;
-          })}
-        </ul>
-      )}
-      <EmoteDrop messages={messages} />
-    </>
+    <main className={styles.overlay}>
+      <div />
+      <Overlays messages={messages} />
+      <LowerThird messages={messages} />
+    </main>
   );
 }

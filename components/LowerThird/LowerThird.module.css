@@ -1,0 +1,18 @@
+.lower-third {
+  width: 100vw;
+  height: 140px;
+  background: var(--black);
+  display: grid;
+  grid-template-columns: 280px 1fr 380px;
+  position: relative;
+  z-index: 100;
+}
+
+.title {
+  display: flex;
+  margin: auto;
+  text-align: center;
+  font-family: "Special Elite", cursive;
+  color: white;
+  font-size: 30px;
+}
